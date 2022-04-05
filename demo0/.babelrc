@@ -1,0 +1,10 @@
+{
+  "presets": [
+    // preset 是 一系列 plugins 的集合
+    "@babel/preset-env", // 增加 ES6 特性
+    "@babel/preset-react" // 解析 React 的 JSX 语法
+  ],
+  "plugins": [
+    // 插件顺序，从上往下执行
+  ]
+}
