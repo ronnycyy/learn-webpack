@@ -55,15 +55,15 @@ module.exports = {
           {
             loader: 'px2rem-loader',
             options: {
-              // 初始换算 1 rem === 75px  (针对你当前调试的设备来设定，就是一个比例)
+              // 初始换算 1 rem === 37.5px  (针对你当前调试的设备来设定，就是一个比例)
               // 例子:
-              // 1. 开发过程写了 37.5px，打包成 0.5 rem
-              // 2. 那么到了 iphone6 上，通过 lib-flexible 库动态设置 html 的 font-size 为 37.5 px，
-              // 3. 这时候 0.5 rem * 37.5 px = 18.75 px (做到了屏幕缩小 我的 px 也缩小)
+              // 1. 开发过程写了 20px，打包成 0.53333333 rem
+              // 2. 那么到了 iphone6S 上，通过 lib-flexible 库动态设置 html 的 font-size 为 41.4 px，
+              // 3. 这时候 0.53333333 rem * 41.4 px = 22.08 px (做到了 "屏幕变大，我的px也变大" )
 
               // 可以总结为，设备屏幕变小的过程，就是 1rem 从 75px 到 37.5px 的过程
 
-              remUni: 75, 
+              remUnit: 37.5,    // 可以固定成这个，这个是 iphone6 的 1rem 尺寸。开发时打开 iphone6 模拟视图看效果，写 px 即可。
               remPrecision: 8   // px 转 rem 后，小数点的位数
             }
           }
