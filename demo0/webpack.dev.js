@@ -1,5 +1,6 @@
 const path = require('path')
 const webpack = require('webpack');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -70,6 +71,6 @@ module.exports = {
     // webpack-dev-server 配合 HotModuleReplacementPlugin
     // 不输出文件，而是保存在内存中，比起 webpack --watch (磁盘IO) 速度更快
     new webpack.HotModuleReplacementPlugin(),
-    new MiniCss
+    new CleanWebpackPlugin(),
   ]
 }
