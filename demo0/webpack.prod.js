@@ -1,15 +1,56 @@
 'use strict';
 
+const glob = require('glob');
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+// 通用多页面打包方案
+const setMPA = () => {
+  const entry = {};
+  const htmlWebpackPlugins = [];
+  const entryFiles = glob.sync(path.join(__dirname, './src/*/index.js'));
+
+  for (let i = 0, len = entryFiles.length; i < len; i++) {
+    // '/Users/chenyunyi/Desktop/webpack/learn-webpack/demo0/src/index/index.js'
+    const pagePath = entryFiles[i];
+    // 获取页面名称，如 index, search
+    const match = pagePath.match(/\/src\/(.*)\/index.js/);
+    const pageName = match && match[1];
+
+    /**
+     * entry = {
+        index: '/Users/chenyunyi/Desktop/webpack/learn-webpack/demo0/src/index/index.js',
+        search: '/Users/chenyunyi/Desktop/webpack/learn-webpack/demo0/src/search/index.js'
+      }
+     */
+    entry[pageName] = pagePath;
+    htmlWebpackPlugins.push(
+      new HtmlWebpackPlugin({
+        template: path.join(__dirname, `src/${pageName}/index.html`),
+        filename: `${pageName}.html`,
+        chunks: [pageName],
+        inject: true,
+        minify: {
+          html5: true,
+          collapseWhitespace: true,
+          preserveLineBreaks: false,
+          minifyCSS: true,
+          minifyJS: true,
+          removeComments: true
+        }
+      })
+    );
+  }
+
+  return { entry, htmlWebpackPlugins }
+}
+
+const { entry, htmlWebpackPlugins } = setMPA();
+
 module.exports = {
-  entry: {
-    index: './src/index.js',
-    search: './src/search.js'
-  },
+  entry: entry,
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[name]_[chunkhash:8].js'
@@ -68,33 +109,6 @@ module.exports = {
       assetNameRegExp: /\.css$/g,
       cssProcessor: require('cssnano')
     }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src/index.html'),
-      filename: 'index.html',
-      chunks: ['index'],
-      inject: true,
-      minify: {
-        html5: true,
-        collapseWhitespace: true,
-        preserveLineBreaks: false,
-        minifyCSS: true,
-        minifyJS: true,
-        removeComments: true
-      }
-    }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src/search.html'),
-      filename: 'search.html',
-      chunks: ['search'],
-      inject: true,
-      minify: {
-        html5: true,
-        collapseWhitespace: true,
-        preserveLineBreaks: false,
-        minifyCSS: true,
-        minifyJS: true,
-        removeComments: true
-      }
-    })
+    ...htmlWebpackPlugins
   ]
 };

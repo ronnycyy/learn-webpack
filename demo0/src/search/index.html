@@ -2,12 +2,13 @@
 <html lang="en">
 
 <head>
+  <!-- 内联减少 HTTP 请求 -->
   <!-- webpack4 中，HtmlWebpackPlugin 默认使用 ejs 模版引擎，所以这里可以用 ${} -->
   <!-- ![待内联的html] -->
   ${ require('raw-loader!./meta.html')}
   <title>搜索页</title>
   <!-- ![待内联的js] -->
-  <script>${ require('raw-loader!babel-loader!../node_modules/lib-flexible/flexible.js') }</script>
+  <script>${ require('raw-loader!babel-loader!../../node_modules/lib-flexible/flexible.js') }</script>
 </head>
 
 <body>
