@@ -9,9 +9,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const webpack = require('webpack');
 
-
 // import 会被转换为 __webpack_require__
-
 
 // 通用多页面打包方案
 const setMPA = () => {
@@ -69,10 +67,10 @@ module.exports = {
   // 默认开始 scope hoisting
   // 所谓的 0配置...
   // mode: 'production',   
-  
+
   // 不要默认压缩，用 source map 来细化压缩
   // 不要 scope hoisting
-  mode: 'none',   
+  mode: 'none',
 
   // https://webpack.docschina.org/configuration/devtool/#development
   // https://webpack.docschina.org/configuration/devtool/#production
@@ -125,7 +123,12 @@ module.exports = {
     rules: [
       {
         test: /.js$/,
-        use: 'babel-loader'
+        use: [
+          // 支持 ES6 语法
+          'babel-loader',
+          // JS 语法规范检查
+          // 'eslint-loader'  // 有点烦，先注释掉你
+        ]
       },
       {
         test: /.css$/,
