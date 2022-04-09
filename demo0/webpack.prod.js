@@ -5,6 +5,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 // 通用多页面打包方案
 const setMPA = () => {
@@ -55,7 +56,28 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: '[name]_[chunkhash:8].js'
   },
-  mode: 'production',
+  // mode: 'production',
+  mode: 'none',   // 不要默认压缩，用 source map 来细化压缩
+
+  // https://webpack.docschina.org/configuration/devtool/#development
+  // https://webpack.docschina.org/configuration/devtool/#production
+
+  // devtool 一  开发环境
+  // eval 不会映射错误行列信息，它快，适合开发环境
+  // devtool: 'eval',
+  // devtool: 'eval-source-map',
+  // devtool: 'eval-cheap-source-map'
+
+  // devtool 二 生产环境
+  // sourceMappingURL 指向 *.js.map 文件
+  // source-map 最慢，但是发生错误时，能映射到行列信息。可以把 单独的  *.js.map 放到错误检测系统中，然后只把 .js 上线。
+  // 实测 *.js是822KB，*.js.map是1.62MB
+  devtool: 'source-map',
+
+  // devtool 三 特定场景
+  // map 内联到 js 里，js 变得很大，实测*.js是2.96MB
+  // devtool: 'inline-source-map',
+
   module: {
     rules: [
       {
@@ -109,6 +131,7 @@ module.exports = {
       assetNameRegExp: /\.css$/g,
       cssProcessor: require('cssnano')
     }),
+    new CleanWebpackPlugin(),
     ...htmlWebpackPlugins
   ]
 };
