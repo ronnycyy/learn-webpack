@@ -61,8 +61,8 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: '[name]_[chunkhash:8].js'
   },
-  // mode: 'production',
-  mode: 'none',   // 不要默认压缩，用 source map 来细化压缩
+  mode: 'production',   // 默认开启 Tree-Shaking
+  // mode: 'none',   // 不要默认压缩，用 source map 来细化压缩
 
   // https://webpack.docschina.org/configuration/devtool/#development
   // https://webpack.docschina.org/configuration/devtool/#production
@@ -74,9 +74,9 @@ module.exports = {
   // devtool: 'eval-cheap-source-map'
 
   // devtool 二 生产环境
-  // sourceMappingURL 指向 *.js.map 文件
-  // source-map 最慢，但是发生错误时，能映射到行列信息。可以把 单独的  *.js.map 放到错误检测系统中，然后只把 .js 上线。
-  // 实测 *.js是822KB，*.js.map是1.62MB
+  // source-map 最慢，但是发生错误时，能映射到行列信息。
+  // ⚠️⚠️⚠️不能把 .map 暴露在生产环境!!!! 应该☝️把 .js 单独上线， map 留在监控系统
+  // 实测 *.js是822KB，*.js.map是1.62MB, sourceMappingURL 指向 *.js.map 文件
   devtool: 'source-map',
 
   // devtool 三 特定场景
