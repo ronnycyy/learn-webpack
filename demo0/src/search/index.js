@@ -6,6 +6,7 @@ import './search.less';
 import '../../common';
 import lion from './images/lion.jpeg';
 import { funcA } from './tree-shaking';
+import largeNumberAdd from 'ry-large-number-add';
 
 class Search extends React.Component {
 
@@ -40,6 +41,9 @@ class Search extends React.Component {
     return (
       <>
         <div className="search-text">秋卡</div>
+
+        <span>大整数📄 算一算:</span>
+        <h5>{largeNumberAdd('786547365193625383', '786683463737')}</h5>
 
         {/* 动态引入的组件 */}
         {

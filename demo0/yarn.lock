@@ -6552,6 +6552,11 @@ rxjs@^6.4.0:
   dependencies:
     tslib "^1.9.0"
 
+ry-large-number-add@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/ry-large-number-add/-/ry-large-number-add-1.0.0.tgz#31af8f5833fd2e4f9ae852df85c3cdab3d495a8e"
+  integrity sha512-RNzgF61o34EhgXqc0cHaN1QIFxyGoXzpwlhZpDcEjtGQVZFTBsM8uDr6Y08XrMNK7aIKjeiETf2HDxYmCyCjaw==
+
 safe-buffer@5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
   resolved "https://registry.npmmirror.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
