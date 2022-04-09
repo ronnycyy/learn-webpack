@@ -87,7 +87,8 @@ module.exports = {
   // source-map 最慢，但是发生错误时，能映射到行列信息。
   // ⚠️⚠️⚠️不能把 .map 暴露在生产环境!!!! 应该☝️把 .js 单独上线， map 留在监控系统
   // 实测 *.js是822KB，*.js.map是1.62MB, sourceMappingURL 指向 *.js.map 文件
-  devtool: 'source-map',
+  // devtool: 'source-map',
+  devtool: 'none',  // 官网说，这是一个不错的选择✌️
 
   // devtool 三 特定场景
   // map 内联到 js 里，js 变得很大，实测*.js是2.96MB

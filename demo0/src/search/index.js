@@ -9,6 +9,19 @@ import { funcA } from './tree-shaking';
 
 class Search extends React.Component {
 
+  constructor() {
+    super(...arguments);
+    this.state = { Text: null };   // 初始组件设置为 null
+  }
+
+  loadComponent() {
+    // 懒加载组件
+    // 基于 @babel/plugin-syntax-dynamic-import，可以用 ESM 的语法写动态 import
+    import('./text.js').then(T => {
+      this.setState({ Text: T.default });
+    })
+  }
+
   render() {
 
     // Tree-Shaking 掉
@@ -22,16 +35,24 @@ class Search extends React.Component {
     // 故意报错, 看行列信息
     // a = 1;
 
+    const { Text } = this.state;
+
     return (
       <>
         <div className="search-text">秋卡</div>
+
+        {/* 动态引入的组件 */}
+        {
+          Text ? <Text /> : null
+        }
+
         {/* 用一下 text，它就不会被 Tree-Shaking 掉 */}
         {/* <p>{funcA()}</p> */}
-        <img src={lion} />
+
+        <img src={lion} onClick={this.loadComponent.bind(this)} />
       </>
     )
   }
-
 }
 
 ReactDOM.render(
