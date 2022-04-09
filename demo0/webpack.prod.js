@@ -6,6 +6,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
+
 
 // 通用多页面打包方案
 const setMPA = () => {
@@ -31,7 +33,10 @@ const setMPA = () => {
       new HtmlWebpackPlugin({
         template: path.join(__dirname, `src/${pageName}/index.html`),
         filename: `${pageName}.html`,
-        chunks: [pageName],
+        // 一个 chunk 其实就是一份本地服务器上的 js 文件
+        // chunks: [pageName],
+        // chunks: ['vendors', pageName],   // 分离基础库 react/react-dom 到 vendors
+        chunks: ['commons', pageName],   // 分离公共模块 到 commons
         inject: true,
         minify: {
           html5: true,
@@ -78,6 +83,33 @@ module.exports = {
   // map 内联到 js 里，js 变得很大，实测*.js是2.96MB
   // devtool: 'inline-source-map',
 
+  // 分离基础包 方式一  ————  到本地服务器 (vendors.js)
+  // 使用 splitChunks 分离基础包 react/react-dom
+  // optimization: {
+  //   splitChunks: {
+  //     minSize: 0,
+  //     cacheGroups: {
+  //       commons: {
+  //         test: /(react|react-dom)/,
+  //         name: 'vendors',   // angular 里也打成了 vendors.js，貌似就是这个
+  //         chunks: 'all',
+  //       }
+  //     }
+  //   },
+  // },
+  // 分离页面公共文件
+  optimization: {
+    splitChunks: {
+      minSize: 0,
+      cacheGroups: {
+        commons: {
+          name: 'commons',
+          chunks: 'all',
+          minChunks: 2
+        }
+      }
+    }
+  },
   module: {
     rules: [
       {
@@ -132,6 +164,23 @@ module.exports = {
       cssProcessor: require('cssnano')
     }),
     new CleanWebpackPlugin(),
+    // 分离基础包 方式二  ————  到 CDN 服务器
+    // 由于减少了 react/react-dom，组件.js 明显减小了
+    new HtmlWebpackExternalsPlugin({
+      externals: [
+        {
+          module: 'react',
+          // 注意浏览器不认识 cjs 的包，要用 umd/amd
+          entry: 'https://cdn.bootcdn.net/ajax/libs/react/17.0.2/umd/react.production.min.js',
+          global: 'React',
+        },
+        {
+          module: 'react-dom',
+          entry: 'https://cdn.bootcdn.net/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js',
+          global: 'ReactDOM',
+        }
+      ],
+    }),
     ...htmlWebpackPlugins
   ]
 };
