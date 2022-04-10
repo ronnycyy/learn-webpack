@@ -204,6 +204,16 @@ module.exports = {
     ...htmlWebpackPlugins,
     // 优化输出日志
     new FriendlyErrorsWebpackPlugin(),
+    // 捕获到错误时，自定义处理逻辑
+    function () {
+      this.hooks.done.tap('done', (stats) => {
+        // webpack done 事件
+        if (stats.compilation.errors && stats.compilation.errors.length && process.argv.indexOf('--watch') == -1) {
+          console.log('出错啦!! 🤦‍♂️: 日志📒上报🚀🚀🚀');
+          process.exit(1);
+        }
+      })
+    }
     // 以往 webpack 打出来的一个模块就是一个闭包，在浏览器里，执行速度很慢
     // 开启 Scope Hoisting, 把模块内联进来，减少闭包
     // new webpack.optimize.ModuleConcatenationPlugin()
