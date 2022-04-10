@@ -51,7 +51,7 @@ const setMPA = () => {
             preserveLineBreaks: false,
             minifyCSS: true,
             minifyJS: true,
-            removeComments: true
+            removeComments: false   // 不要去掉注释，因为留着占位符，我要插入 React 的模板
           }
         })
       );

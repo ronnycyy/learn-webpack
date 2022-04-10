@@ -4,25 +4,25 @@ if (typeof window === 'undefined') {
 }
 
 // SSR 问题2: 解析样式
+// 解决方案: 首屏不渲染，再发一次吧: SSR 只在 index.html 的 占位符(HTML_PLACEHOLDER) 插入 React 模版，其余的 css 等，由浏览器再发一些请求去获取。
+
+// SSR 问题3: 初始的 ajax 数据
+// 解决方案: 先请求(这里是mock)一次，再通过 占位符(INITIAL_DATA_PLACEHOLDER) 插入。
 
 const express = require('express');
 const { renderToString } = require('react-dom/server');
 const SSR = require('../dist/search-server.js');
+const fs = require('fs');
+const path = require('path');
+const template = fs.readFileSync(path.join(__dirname, '../dist/search.html'), 'utf-8');
+const data = require('./data.json');
 
 const renderMarkup = (str) => {
-  return `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    </head>
-    <body>
-      <div>${str}</div>
-    </body>
-    </html>
-  `;
+  // 打包📦之后的 html 留个占位符，供这里插入
+  const dataString = JSON.stringify(data);
+  return template
+    .replace('<!--HTML_PLACEHOLDER-->', str)     // React 渲染的 html 字符串
+    .replace('<!--INITIAL_DATA_PLACEHOLDER-->', `<script>window.__init_data__=${dataString}</script>`);   // 模拟首屏 ajax 数据
 }
 
 const server = (port) => {
