@@ -8,6 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const webpack = require('webpack');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 // import 会被转换为 __webpack_require__
 
@@ -66,11 +67,11 @@ module.exports = {
   // 默认开启 Tree-Shaking
   // 默认开始 scope hoisting
   // 所谓的 0配置...
-  // mode: 'production',   
+  mode: 'production',
 
   // 不要默认压缩，用 source map 来细化压缩
   // 不要 scope hoisting
-  mode: 'none',
+  // mode: 'none',
 
   // https://webpack.docschina.org/configuration/devtool/#development
   // https://webpack.docschina.org/configuration/devtool/#production
@@ -106,6 +107,11 @@ module.exports = {
   //     }
   //   },
   // },
+
+
+  // 优化输出日志
+  stats: 'errors-only',
+
   // 分离页面公共文件
   optimization: {
     splitChunks: {
@@ -196,8 +202,10 @@ module.exports = {
       ],
     }),
     ...htmlWebpackPlugins,
+    // 优化输出日志
+    new FriendlyErrorsWebpackPlugin(),
     // 以往 webpack 打出来的一个模块就是一个闭包，在浏览器里，执行速度很慢
     // 开启 Scope Hoisting, 把模块内联进来，减少闭包
-    new webpack.optimize.ModuleConcatenationPlugin()
+    // new webpack.optimize.ModuleConcatenationPlugin()
   ]
 };
