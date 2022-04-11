@@ -2,17 +2,20 @@
 
 const glob = require('glob');
 const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
-const webpack = require('webpack');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-// import 会被转换为 __webpack_require__
+/**
+ * 1. 资源解析🔍
+ * 2. 样式增强💪
+ * 3. 目录清理🧹
+ * 4. 多页面打包📦
+ * 5. 命令行优化、错误捕获💻
+ * 6. CSS 提取🧯
+ */
 
-// 通用多页面打包方案
 const setMPA = () => {
   const entry = {};
   const htmlWebpackPlugins = [];
@@ -55,76 +58,11 @@ const setMPA = () => {
 
   return { entry, htmlWebpackPlugins }
 }
-
 const { entry, htmlWebpackPlugins } = setMPA();
 
 module.exports = {
   entry: entry,
-  output: {
-    path: path.join(__dirname, 'dist'),
-    filename: '[name]_[chunkhash:8].js'
-  },
-  // 默认开启 Tree-Shaking
-  // 默认开始 scope hoisting
-  // 所谓的 0配置...
-  mode: 'production',
-
-  // 不要默认压缩，用 source map 来细化压缩
-  // 不要 scope hoisting
-  // mode: 'none',
-
-  // https://webpack.docschina.org/configuration/devtool/#development
-  // https://webpack.docschina.org/configuration/devtool/#production
-
-  // devtool 一  开发环境
-  // eval 不会映射错误行列信息，它快，适合开发环境
-  // devtool: 'eval',
-  // devtool: 'eval-source-map',
-  // devtool: 'eval-cheap-source-map'
-
-  // devtool 二 生产环境
-  // source-map 最慢，但是发生错误时，能映射到行列信息。
-  // ⚠️⚠️⚠️不能把 .map 暴露在生产环境!!!! 应该☝️把 .js 单独上线， map 留在监控系统
-  // 实测 *.js是822KB，*.js.map是1.62MB, sourceMappingURL 指向 *.js.map 文件
-  // devtool: 'source-map',
-  devtool: 'none',  // 官网说，这是一个不错的选择✌️
-
-  // devtool 三 特定场景
-  // map 内联到 js 里，js 变得很大，实测*.js是2.96MB
-  // devtool: 'inline-source-map',
-
-  // 分离基础包 方式一  ————  到本地服务器 (vendors.js)
-  // 使用 splitChunks 分离基础包 react/react-dom
-  // optimization: {
-  //   splitChunks: {
-  //     minSize: 0,
-  //     cacheGroups: {
-  //       commons: {
-  //         test: /(react|react-dom)/,
-  //         name: 'vendors',   // angular 里也打成了 vendors.js，貌似就是这个
-  //         chunks: 'all',
-  //       }
-  //     }
-  //   },
-  // },
-
-
-  // 优化输出日志
   stats: 'errors-only',
-
-  // 分离页面公共文件
-  optimization: {
-    splitChunks: {
-      minSize: 0,
-      cacheGroups: {
-        commons: {
-          name: 'commons',
-          chunks: 'all',
-          minChunks: 2
-        }
-      }
-    }
-  },
   module: {
     rules: [
       {
@@ -176,37 +114,12 @@ module.exports = {
     ]
   },
   plugins: [
-    // 提取 css 成单独的文件，再加上指纹🔒
     new MiniCssExtractPlugin({
       filename: '[name]_[contenthash:8].css'
     }),
-    // 压缩 css
-    new OptimizeCSSAssetsPlugin({
-      assetNameRegExp: /\.css$/g,
-      cssProcessor: require('cssnano')
-    }),
     new CleanWebpackPlugin(),
-    // 分离基础包 方式二  ————  到 CDN 服务器
-    // 由于减少了 react/react-dom，组件.js 明显减小了
-    new HtmlWebpackExternalsPlugin({
-      externals: [
-        {
-          module: 'react',
-          // 注意浏览器不认识 cjs 的包，要用 umd/amd
-          entry: 'https://cdn.bootcdn.net/ajax/libs/react/17.0.2/umd/react.production.min.js',
-          global: 'React',
-        },
-        {
-          module: 'react-dom',
-          entry: 'https://cdn.bootcdn.net/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js',
-          global: 'ReactDOM',
-        }
-      ],
-    }),
     ...htmlWebpackPlugins,
-    // 优化输出日志
     new FriendlyErrorsWebpackPlugin(),
-    // 捕获到错误时，自定义处理逻辑
     function () {
       this.hooks.done.tap('done', (stats) => {
         // webpack done 事件
@@ -216,8 +129,5 @@ module.exports = {
         }
       })
     }
-    // 以往 webpack 打出来的一个模块就是一个闭包，在浏览器里，执行速度很慢
-    // 开启 Scope Hoisting, 把模块内联进来，减少闭包
-    // new webpack.optimize.ModuleConcatenationPlugin()
   ]
-};
+}
