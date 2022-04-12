@@ -1,9 +1,7 @@
-
-
 const glob = require('glob');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -16,10 +14,14 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
  * 6. CSS 提取🧯
  */
 
+
+// 方便冒烟测试而写了一个当前执行路径，这个路径就是要测试的 template
+const projectRoot = process.cwd();
+
 const setMPA = () => {
   const entry = {};
   const htmlWebpackPlugins = [];
-  const entryFiles = glob.sync(path.join(__dirname, './src/*/index.js'));
+  const entryFiles = glob.sync(path.join(projectRoot, './src/*/index.js'));
 
   for (let i = 0, len = entryFiles.length; i < len; i++) {
     // '/Users/chenyunyi/Desktop/webpack/learn-webpack/demo0/src/index/index.js'
@@ -37,7 +39,7 @@ const setMPA = () => {
     entry[pageName] = pagePath;
     htmlWebpackPlugins.push(
       new HtmlWebpackPlugin({
-        template: path.join(__dirname, `src/${pageName}/index.html`),
+        template: path.join(projectRoot, `./src/${pageName}/index.html`),
         filename: `${pageName}.html`,
         // 一个 chunk 其实就是一份本地服务器上的 js 文件
         // chunks: [pageName],
@@ -62,6 +64,10 @@ const { entry, htmlWebpackPlugins } = setMPA();
 
 module.exports = {
   entry,
+  output: {
+    path: path.join(projectRoot, 'dist'),
+    filename: '[name]_[chunkhash:8].js'
+  },
   stats: 'errors-only',
   module: {
     rules: [

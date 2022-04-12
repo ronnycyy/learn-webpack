@@ -1,0 +1,14 @@
+{
+  "presets": [
+    // preset 是 一系列 plugins 的集合
+    "@babel/preset-env", // 增加 ES6 特性
+    "@babel/preset-react" // 解析 React 的 JSX 语法
+  ],
+  "plugins": [
+    /** 插件顺序，从上往下执行 */
+    // 动态 import 功能
+    // 打包出来类似: 2_29783b5c.js 这样的动态组件
+    // 在 main 组件中 import('DynamicComponent.js')
+    "@babel/plugin-syntax-dynamic-import"
+  ]
+}
