@@ -1,7 +1,8 @@
 const merge = require('webpack-merge');
-const baseConfig = require('./webpack.base');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const cssProcessor = require('cssnano');
+const baseConfig = require('./webpack.base');
 
 /**
  * 1. 代码压缩🔨
@@ -21,15 +22,15 @@ const prodConfig = {
         commons: {
           name: 'commons',
           chunks: 'all',
-          minChunks: 2
-        }
-      }
-    }
+          minChunks: 2,
+        },
+      },
+    },
   },
   plugins: [
     new OptimizeCSSAssetsPlugin({
       assetNameRegExp: /\.css$/g,
-      cssProcessor: require('cssnano')
+      cssProcessor,
     }),
     new HtmlWebpackExternalsPlugin({
       externals: [
@@ -43,14 +44,10 @@ const prodConfig = {
           module: 'react-dom',
           entry: 'https://cdn.bootcdn.net/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js',
           global: 'ReactDOM',
-        }
+        },
       ],
     }),
-  ]
-}
+  ],
+};
 
 module.exports = merge(baseConfig, prodConfig);
-
-
-
-

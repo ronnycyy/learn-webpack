@@ -1,8 +1,9 @@
 const merge = require('webpack-merge');
-const baseConfig = require('./webpack.base');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const path = require('path');
+const cssProcessor = require('cssnano');
+const baseConfig = require('./webpack.base');
 
 /**
  * 1. output 的 libraryTarget 配置
@@ -14,19 +15,19 @@ const prodConfig = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[name]-server.js',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
   },
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: 'ignore-loader'
+        use: 'ignore-loader',
       },
       {
         test: /\.less$/,
-        use: 'ignore-loader'
-      }
-    ]
+        use: 'ignore-loader',
+      },
+    ],
   },
   optimization: {
     splitChunks: {
@@ -35,15 +36,15 @@ const prodConfig = {
         commons: {
           name: 'commons',
           chunks: 'all',
-          minChunks: 2
-        }
-      }
-    }
+          minChunks: 2,
+        },
+      },
+    },
   },
   plugins: [
     new OptimizeCSSAssetsPlugin({
       assetNameRegExp: /\.css$/g,
-      cssProcessor: require('cssnano')
+      cssProcessor,
     }),
     new HtmlWebpackExternalsPlugin({
       externals: [
@@ -56,14 +57,10 @@ const prodConfig = {
           module: 'react-dom',
           entry: 'https://cdn.bootcdn.net/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js',
           global: 'ReactDOM',
-        }
+        },
       ],
     }),
-  ]
-}
+  ],
+};
 
 module.exports = merge(baseConfig, prodConfig);
-
-
-
-

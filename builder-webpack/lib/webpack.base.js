@@ -1,4 +1,4 @@
-'use strict';
+
 
 const glob = require('glob');
 const path = require('path');
@@ -42,7 +42,7 @@ const setMPA = () => {
         // 一个 chunk 其实就是一份本地服务器上的 js 文件
         // chunks: [pageName],
         // chunks: ['vendors', pageName],   // 分离基础库 react/react-dom 到 vendors
-        chunks: ['commons', pageName],   // 分离公共模块 到 commons
+        chunks: ['commons', pageName], // 分离公共模块 到 commons
         inject: true,
         minify: {
           html5: true,
@@ -50,18 +50,18 @@ const setMPA = () => {
           preserveLineBreaks: false,
           minifyCSS: true,
           minifyJS: true,
-          removeComments: true
-        }
-      })
+          removeComments: true,
+        },
+      }),
     );
   }
 
-  return { entry, htmlWebpackPlugins }
-}
+  return { entry, htmlWebpackPlugins };
+};
 const { entry, htmlWebpackPlugins } = setMPA();
 
 module.exports = {
-  entry: entry,
+  entry,
   stats: 'errors-only',
   module: {
     rules: [
@@ -72,22 +72,22 @@ module.exports = {
           'babel-loader',
           // JS 语法规范检查
           // 'eslint-loader'  // 有点烦，先注释掉你
-        ]
+        ],
       },
       {
         test: /.css$/,
         use: [
           MiniCssExtractPlugin.loader,
-          'css-loader'
-        ]
+          'css-loader',
+        ],
       },
       {
         test: /.less$/,
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',
-          'less-loader'
-        ]
+          'less-loader',
+        ],
       },
       {
         test: /.(png|jpg|gif|jpeg)$/,
@@ -95,10 +95,10 @@ module.exports = {
           {
             loader: 'file-loader',
             options: {
-              name: '[name]_[hash:8].[ext]'
-            }
-          }
-        ]
+              name: '[name]_[hash:8].[ext]',
+            },
+          },
+        ],
       },
       {
         test: /.(woff|woff2|eot|ttf|otf)$/,
@@ -106,28 +106,28 @@ module.exports = {
           {
             loader: 'file-loader',
             options: {
-              name: '[name]_[hash:8][ext]'
-            }
-          }
-        ]
-      }
-    ]
+              name: '[name]_[hash:8][ext]',
+            },
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: '[name]_[contenthash:8].css'
+      filename: '[name]_[contenthash:8].css',
     }),
     new CleanWebpackPlugin(),
     ...htmlWebpackPlugins,
     new FriendlyErrorsWebpackPlugin(),
-    function () {
+    function errorPlugin() {
       this.hooks.done.tap('done', (stats) => {
         // webpack done 事件
-        if (stats.compilation.errors && stats.compilation.errors.length && process.argv.indexOf('--watch') == -1) {
+        if (stats.compilation.errors && stats.compilation.errors.length && process.argv.indexOf('--watch') === -1) {
           console.log('出错啦!! 🤦‍♂️: 日志📒上报🚀🚀🚀');
           process.exit(1);
         }
-      })
-    }
-  ]
-}
+      });
+    },
+  ],
+};
