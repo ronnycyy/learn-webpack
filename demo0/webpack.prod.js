@@ -110,7 +110,8 @@ module.exports = {
 
 
   // 优化输出日志
-  stats: 'errors-only',
+  // 注释掉，方便使用 npm run build:stats 查看分析数据
+  // stats: 'errors-only',
 
   // 分离页面公共文件
   optimization: {
@@ -205,7 +206,8 @@ module.exports = {
     }),
     ...htmlWebpackPlugins,
     // 优化输出日志
-    new FriendlyErrorsWebpackPlugin(),
+    // 注释掉，方便使用 npm run build:stats 查看分析数据
+    // new FriendlyErrorsWebpackPlugin(),
     // 捕获到错误时，自定义处理逻辑
     function () {
       this.hooks.done.tap('done', (stats) => {
