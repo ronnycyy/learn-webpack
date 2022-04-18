@@ -5,10 +5,14 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const webpack = require('webpack');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+
+// 测量各 loader/plugin 的时间消耗，以优化某些环节，提升打包📦速度
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const smp = new SpeedMeasurePlugin();
 
 // import 会被转换为 __webpack_require__
 
@@ -58,7 +62,9 @@ const setMPA = () => {
 
 const { entry, htmlWebpackPlugins } = setMPA();
 
-module.exports = {
+
+// smp.wrap 测量打包各环节的速度
+module.exports = smp.wrap({
   entry: entry,
   output: {
     path: path.join(__dirname, 'dist'),
@@ -110,8 +116,7 @@ module.exports = {
 
 
   // 优化输出日志
-  // 注释掉，方便使用 npm run build:stats 查看分析数据
-  // stats: 'errors-only',
+  stats: 'errors-only',
 
   // 分离页面公共文件
   optimization: {
@@ -207,7 +212,7 @@ module.exports = {
     ...htmlWebpackPlugins,
     // 优化输出日志
     // 注释掉，方便使用 npm run build:stats 查看分析数据
-    // new FriendlyErrorsWebpackPlugin(),
+    new FriendlyErrorsWebpackPlugin(),
     // 捕获到错误时，自定义处理逻辑
     function () {
       this.hooks.done.tap('done', (stats) => {
@@ -222,4 +227,4 @@ module.exports = {
     // 开启 Scope Hoisting, 把模块内联进来，减少闭包
     // new webpack.optimize.ModuleConcatenationPlugin()
   ]
-};
+});
