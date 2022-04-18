@@ -53,9 +53,9 @@ const setMPA = () => {
           minifyCSS: true,
           minifyJS: true,
           removeComments: true,
-        },
-      }),
-    );
+        }
+      })
+    )
   }
 
   return { entry, htmlWebpackPlugins };
