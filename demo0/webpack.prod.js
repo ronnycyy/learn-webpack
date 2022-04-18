@@ -10,9 +10,13 @@ const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const webpack = require('webpack');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
+// 速度分析
 // 测量各 loader/plugin 的时间消耗，以优化某些环节，提升打包📦速度
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 const smp = new SpeedMeasurePlugin();
+
+// 体积分析
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // import 会被转换为 __webpack_require__
 
@@ -194,21 +198,22 @@ module.exports = smp.wrap({
     new CleanWebpackPlugin(),
     // 分离基础包 方式二  ————  到 CDN 服务器
     // 由于减少了 react/react-dom，组件.js 明显减小了
-    new HtmlWebpackExternalsPlugin({
-      externals: [
-        {
-          module: 'react',
-          // 注意浏览器不认识 cjs 的包，要用 umd/amd
-          entry: 'https://cdn.bootcdn.net/ajax/libs/react/17.0.2/umd/react.production.min.js',
-          global: 'React',
-        },
-        {
-          module: 'react-dom',
-          entry: 'https://cdn.bootcdn.net/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js',
-          global: 'ReactDOM',
-        }
-      ],
-    }),
+    // 注释掉，看 BundleAnalyzerPlugin 分析出的体积有啥变化
+    // new HtmlWebpackExternalsPlugin({
+    //   externals: [
+    //     {
+    //       module: 'react',
+    //       // 注意浏览器不认识 cjs 的包，要用 umd/amd
+    //       entry: 'https://cdn.bootcdn.net/ajax/libs/react/17.0.2/umd/react.production.min.js',
+    //       global: 'React',
+    //     },
+    //     {
+    //       module: 'react-dom',
+    //       entry: 'https://cdn.bootcdn.net/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js',
+    //       global: 'ReactDOM',
+    //     }
+    //   ],
+    // }),
     ...htmlWebpackPlugins,
     // 优化输出日志
     // 注释掉，方便使用 npm run build:stats 查看分析数据
@@ -222,7 +227,8 @@ module.exports = smp.wrap({
           process.exit(1);
         }
       })
-    }
+    },
+    new BundleAnalyzerPlugin()
     // 以往 webpack 打出来的一个模块就是一个闭包，在浏览器里，执行速度很慢
     // 开启 Scope Hoisting, 把模块内联进来，减少闭包
     // new webpack.optimize.ModuleConcatenationPlugin()

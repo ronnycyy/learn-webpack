@@ -1,5 +1,8 @@
 'use strict';
 
+// 加一个包，看下 BundleAnalyzerPlugin 分析出的体积有啥变化
+import 'babel-polyfill';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './search.less';
