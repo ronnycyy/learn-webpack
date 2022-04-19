@@ -10,6 +10,9 @@ const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const webpack = require('webpack');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
+// 一个很旧的包 happypack(不推荐) 实践多进程打包📦
+const HappyPack = require('happypack');
+
 // 速度分析
 // 测量各 loader/plugin 的时间消耗，以优化某些环节，提升打包📦速度
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
@@ -68,7 +71,7 @@ const { entry, htmlWebpackPlugins } = setMPA();
 
 
 // smp.wrap 测量打包各环节的速度
-module.exports = smp.wrap({
+module.exports = {
   entry: entry,
   output: {
     path: path.join(__dirname, 'dist'),
@@ -140,8 +143,19 @@ module.exports = smp.wrap({
       {
         test: /.js$/,
         use: [
+          // 使用 webpack4 默认的 thread-loader 多进程打包📦
+          {
+            loader: 'thread-loader',
+            options: {
+              workers: 3,   // 起 3 个进程
+            },
+          },
           // 支持 ES6 语法
           'babel-loader',
+
+          // HappyPack 多进程打包📦
+          // 'happypack/loader',
+
           // JS 语法规范检查
           // 'eslint-loader'  // 有点烦，先注释掉你
         ]
@@ -228,9 +242,16 @@ module.exports = smp.wrap({
         }
       })
     },
-    new BundleAnalyzerPlugin()
+    // new BundleAnalyzerPlugin(),
     // 以往 webpack 打出来的一个模块就是一个闭包，在浏览器里，执行速度很慢
     // 开启 Scope Hoisting, 把模块内联进来，减少闭包
     // new webpack.optimize.ModuleConcatenationPlugin()
+
+    // HappyPack 多进程打包📦
+    // new HappyPack({
+    //   // https://www.npmjs.com/package/happypack#how-it-works
+    //   // 把你在 loader 移除的包加回来
+    //   loaders: ['babel-loader']
+    // })
   ]
-});
+};

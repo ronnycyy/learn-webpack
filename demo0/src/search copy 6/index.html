@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- 内联减少 HTTP 请求 -->
+  <!-- webpack4 中，HtmlWebpackPlugin 默认使用 ejs 模版引擎，所以这里可以用 ${} -->
+  <!-- ![待内联的html] -->
+  ${ require('raw-loader!./meta.html')}
+  <title>搜索页</title>
+  <!-- ![待内联的js] -->
+  <script>${ require('raw-loader!babel-loader!../../node_modules/lib-flexible/flexible.js') }</script>
+</head>
+
+<body>
+  <div id="root"><!--HTML_PLACEHOLDER--></div>
+  <!-- 如果用 HtmlWebpackExternalsPlugin 分离基础包，要手动写 cdn -->
+  <!-- 组件里引用的 react，会被 HtmlWebpackExternalsPlugin 抽离，不打包进来 -->
+  <!-- 注意浏览器不认识 cjs 的包，要用 umd/amd -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+  <!--INITIAL_DATA_PLACEHOLDER-->
+</body>
+
+</html>
