@@ -17,6 +17,9 @@ const HappyPack = require('happypack');
 // 多进程并行压缩 js 代码
 const TerserPlugin = require("terser-webpack-plugin");
 
+// 启用缓存 提升二次构建速度
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+
 // 速度分析
 // 测量各 loader/plugin 的时间消耗，以优化某些环节，提升打包📦速度
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
@@ -147,6 +150,7 @@ module.exports = {
     minimizer: [
       new TerserPlugin({
         parallel: true,
+        cache: true,  // 开启缓存，提升二次构建速度 (实测提速⚡️明显)
       }),
     ]
   },
@@ -157,17 +161,17 @@ module.exports = {
         test: /.js$/,
         use: [
           // 使用 webpack4 默认的 thread-loader 多进程打包📦
-          {
-            loader: 'thread-loader',
-            options: {
-              workers: 3,   // 起 3 个进程
-            },
-          },
+          // {
+          //   loader: 'thread-loader',
+          //   options: {
+          //     workers: 3,   // 起 3 个进程
+          //   },
+          // },
           // 支持 ES6 语法
-          'babel-loader',
+          // 'babel-loader',
 
           // HappyPack 多进程打包📦
-          // 'happypack/loader',
+          'happypack/loader',
 
           // JS 语法规范检查
           // 'eslint-loader'  // 有点烦，先注释掉你
@@ -261,15 +265,20 @@ module.exports = {
     // new webpack.optimize.ModuleConcatenationPlugin()
 
     // HappyPack 多进程打包📦
-    // new HappyPack({
-    //   // https://www.npmjs.com/package/happypack#how-it-works
-    //   // 把你在 loader 移除的包加回来
-    //   loaders: ['babel-loader']
-    // })
+    new HappyPack({
+      // https://www.npmjs.com/package/happypack#how-it-works
+      // 把你在 loader 移除的包加回来
+      // cacheDirectory=true 开启缓存，提升二次构建速度
+      // 首次编译后，生成 node_modules/.cache/babel-loader
+      loaders: ['babel-loader?cacheDirectory=true']
+    }),
 
     // 引用 dll 库
     new webpack.DllReferencePlugin({
       manifest: require('./build/library/library.json')
-    })
+    }),
+
+    // wtf!!! 二次构建的提速⚡️巨大！！！
+    new HardSourceWebpackPlugin()
   ]
 };
