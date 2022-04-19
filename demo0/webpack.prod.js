@@ -127,7 +127,7 @@ module.exports = {
 
 
   // 优化输出日志
-  stats: 'errors-only',
+  // stats: 'errors-only',
 
   optimization: {
     // 分离页面公共文件
@@ -266,5 +266,10 @@ module.exports = {
     //   // 把你在 loader 移除的包加回来
     //   loaders: ['babel-loader']
     // })
+
+    // 引用 dll 库
+    new webpack.DllReferencePlugin({
+      manifest: require('./build/library/library.json')
+    })
   ]
 };
