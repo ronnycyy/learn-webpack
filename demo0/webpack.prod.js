@@ -11,7 +11,11 @@ const webpack = require('webpack');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 // 一个很旧的包 happypack(不推荐) 实践多进程打包📦
+// 推荐 thread-loader
 const HappyPack = require('happypack');
+
+// 多进程并行压缩 js 代码
+const TerserPlugin = require("terser-webpack-plugin");
 
 // 速度分析
 // 测量各 loader/plugin 的时间消耗，以优化某些环节，提升打包📦速度
@@ -125,8 +129,8 @@ module.exports = {
   // 优化输出日志
   stats: 'errors-only',
 
-  // 分离页面公共文件
   optimization: {
+    // 分离页面公共文件
     splitChunks: {
       minSize: 0,
       cacheGroups: {
@@ -136,8 +140,17 @@ module.exports = {
           minChunks: 2
         }
       }
-    }
+    },
+
+    // TerserPlugin 多进程并行压缩代码
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,
+      }),
+    ]
   },
+
   module: {
     rules: [
       {
