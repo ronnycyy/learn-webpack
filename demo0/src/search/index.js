@@ -8,6 +8,7 @@ import ReactDOM from 'react-dom';
 import './search.less';
 import '../../common';
 import lion from './images/lion.jpeg';
+import bg from './images/lion.jpeg'
 import { funcA } from './tree-shaking';
 import largeNumberAdd from 'ry-large-number-add';
 
@@ -57,6 +58,8 @@ class Search extends React.Component {
         {/* <p>{funcA()}</p> */}
 
         <img src={lion} onClick={this.loadComponent.bind(this)} />
+
+        <img src={bg} />
       </>
     )
   }

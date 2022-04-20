@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
+// const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const webpack = require('webpack');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
@@ -28,12 +28,15 @@ const smp = new SpeedMeasurePlugin();
 // 体积分析
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+// 动态 polyfill 
+// 根据 user-agent 返回不同的库，老的浏览器返回 polyfill，新的返回空内容
+// https://cdn.polyfill.io/v2/polyfill.min.js
 
 // tree-shaking css
-const PurgeCSSPlugin = require('purgecss-webpack-plugin');
-const PATHS = {
-  src: path.join(__dirname, 'src')
-}
+// const PurgeCSSPlugin = require('purgecss-webpack-plugin');
+// const PATHS = {
+//   src: path.join(__dirname, 'src')
+// }
 
 // import 会被转换为 __webpack_require__
 
@@ -220,7 +223,16 @@ module.exports = {
             options: {
               name: '[name]_[hash:8].[ext]'
             }
-          }
+          },
+          // {
+          //   // 压缩图片
+          //   loader: 'image-webpack-loader',
+          //   options: {
+          //     mozjpeg: {
+          //       progressive: true,
+          //     }
+          //   }
+          // }
         ]
       },
       {
@@ -302,8 +314,8 @@ module.exports = {
     new HardSourceWebpackPlugin(),
 
     // 摇掉没有用到的 css 样式
-    new PurgeCSSPlugin({
-      paths: glob.sync(`${PATHS.src}/**/*`,  { nodir: true }),
-    }),
+    // new PurgeCSSPlugin({
+    //   paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
+    // }),
   ]
 };
