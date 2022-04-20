@@ -155,11 +155,24 @@ module.exports = {
     ]
   },
 
+  // 缩小构建目标
+  resolve: {
+    alias: {
+      'react': path.resolve(__dirname, './node_modules/react/umd/react.production.min.js'),
+      'react-dom': path.resolve(__dirname, './node_modules/react-dom/umd/react-dom.production.min.js')
+    },
+    extensions: ['.js'],
+    mainFields: ['main']
+  },
+
   module: {
     rules: [
       {
         test: /.js$/,
+        // 缩小构建目标 - 仅构建 src 里的 js，不构建 node_module 里的 js。
+        include: path.resolve('src'),
         use: [
+
           // 使用 webpack4 默认的 thread-loader 多进程打包📦
           // {
           //   loader: 'thread-loader',
