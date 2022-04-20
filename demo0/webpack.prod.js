@@ -28,6 +28,13 @@ const smp = new SpeedMeasurePlugin();
 // 体积分析
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+
+// tree-shaking css
+const PurgeCSSPlugin = require('purgecss-webpack-plugin');
+const PATHS = {
+  src: path.join(__dirname, 'src')
+}
+
 // import 会被转换为 __webpack_require__
 
 // 通用多页面打包方案
@@ -292,6 +299,11 @@ module.exports = {
     }),
 
     // wtf!!! 二次构建的提速⚡️巨大！！！
-    new HardSourceWebpackPlugin()
+    new HardSourceWebpackPlugin(),
+
+    // 摇掉没有用到的 css 样式
+    new PurgeCSSPlugin({
+      paths: glob.sync(`${PATHS.src}/**/*`,  { nodir: true }),
+    }),
   ]
 };
