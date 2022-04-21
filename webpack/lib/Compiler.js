@@ -39,6 +39,7 @@ const { Logger } = require("./logging/Logger");
  * @property {Set<string>} compilationDependencies
  */
 
+// 编译器 继承了 水龙头🚰1 ？？？
 class Compiler extends Tapable {
 	constructor(context) {
 		super();

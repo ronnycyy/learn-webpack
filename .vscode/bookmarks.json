@@ -39,6 +39,26 @@
 					"label": "以后写 webpack.config.js，不知道配置的字段名，就在这里找，哈哈~"
 				}
 			]
+		},
+		{
+			"path": "webpack/lib/webpack.js",
+			"bookmarks": [
+				{
+					"line": 1,
+					"column": 1,
+					"label": "执行，返回 webpack 编译器"
+				}
+			]
+		},
+		{
+			"path": "tapable/README.md",
+			"bookmarks": [
+				{
+					"line": 2,
+					"column": 0,
+					"label": "Tapable 类似于 Node.js 的 EventEmitter 库，控制 hook 的发布与订阅，控制 webpack 插件系统。"
+				}
+			]
 		}
 	]
 }

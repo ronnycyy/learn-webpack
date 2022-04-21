@@ -240,6 +240,9 @@ const isSourceEqual = (a, b) => {
 	return aSource.equals(bSource);
 };
 
+// Compilation 也继承了 水龙头🚰 ????
+// Tapable 类似于 EventEmitter 的 订阅-发布 模式
+// 插件会订阅 Compiler/Compilation 的事件
 class Compilation extends Tapable {
 	/**
 	 * Creates an instance of Compilation.
@@ -1036,13 +1039,13 @@ class Compilation extends Tapable {
 
 		const errorAndCallback = this.bail
 			? err => {
-					callback(err);
-			  }
+				callback(err);
+			}
 			: err => {
-					err.dependencies = [dependency];
-					this.errors.push(err);
-					callback();
-			  };
+				err.dependencies = [dependency];
+				this.errors.push(err);
+				callback();
+			};
 
 		if (
 			typeof dependency !== "object" ||
@@ -1314,7 +1317,7 @@ class Compilation extends Tapable {
 		}
 		buildChunkGraph(
 			this,
-			/** @type {Entrypoint[]} */ (this.chunkGroups.slice())
+			/** @type {Entrypoint[]} */(this.chunkGroups.slice())
 		);
 		this.sortModules(this.modules);
 		this.hooks.afterChunks.call(this.chunks);
@@ -2158,7 +2161,7 @@ class Compilation extends Tapable {
 						} else {
 							throw new Error(
 								`Conflict: Multiple chunks emit assets to the same filename ${file}` +
-									` (chunks ${alreadyWritten.chunk.id} and ${chunk.id})`
+								` (chunks ${alreadyWritten.chunk.id} and ${chunk.id})`
 							);
 						}
 					}
@@ -2279,8 +2282,8 @@ class Compilation extends Tapable {
 	}
 }
 
-// TODO remove in webpack 5
-Compilation.prototype.applyPlugins = util.deprecate(
+	// TODO remove in webpack 5
+	Compilation.prototype.applyPlugins = util.deprecate(
 	/**
 	 * @deprecated
 	 * @param {string} name Name
@@ -2288,40 +2291,40 @@ Compilation.prototype.applyPlugins = util.deprecate(
 	 * @returns {void}
 	 * @this {Compilation}
 	 */
-	function(name, ...args) {
-		this.hooks[
-			name.replace(/[- ]([a-z])/g, match => match[1].toUpperCase())
-		].call(...args);
-	},
+	function (name, ...args) {
+	this.hooks[
+	name.replace(/[-]([a-z]) /g, match => match[1].toUpperCase())
+].call(...args);
+},
 	"Compilation.applyPlugins is deprecated. Use new API on `.hooks` instead"
 );
 
-// TODO remove in webpack 5
-Object.defineProperty(Compilation.prototype, "moduleTemplate", {
+	// TODO remove in webpack 5
+	Object.defineProperty(Compilation.prototype, "moduleTemplate", {
 	configurable: false,
 	get: util.deprecate(
-		/**
-		 * @deprecated
-		 * @this {Compilation}
-		 * @returns {TODO} module template
-		 */
-		function() {
-			return this.moduleTemplates.javascript;
-		},
-		"Compilation.moduleTemplate: Use Compilation.moduleTemplates.javascript instead"
-	),
+	/**
+	 * @deprecated
+	 * @this {Compilation}
+	 * @returns {TODO} module template
+	 */
+	function () {
+	return this.moduleTemplates.javascript;
+},
+	"Compilation.moduleTemplate: Use Compilation.moduleTemplates.javascript instead"
+),
 	set: util.deprecate(
-		/**
-		 * @deprecated
-		 * @param {ModuleTemplate} value Template value
-		 * @this {Compilation}
-		 * @returns {void}
-		 */
-		function(value) {
-			this.moduleTemplates.javascript = value;
-		},
-		"Compilation.moduleTemplate: Use Compilation.moduleTemplates.javascript instead."
-	)
+	/**
+	 * @deprecated
+	 * @param {ModuleTemplate} value Template value
+	 * @this {Compilation}
+	 * @returns {void}
+	 */
+	function (value) {
+	this.moduleTemplates.javascript = value;
+},
+	"Compilation.moduleTemplate: Use Compilation.moduleTemplates.javascript instead."
+)
 });
 
 module.exports = Compilation;

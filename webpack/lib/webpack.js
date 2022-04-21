@@ -1,4 +1,6 @@
 /*
+	执行，返回 webpack 编译器!!!
+
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Tobias Koppers @sokra
 */
@@ -31,13 +33,18 @@ const webpack = (options, callback) => {
 		throw new WebpackOptionsValidationError(webpackOptionsValidationErrors);
 	}
 	let compiler;
+
+
 	if (Array.isArray(options)) {
+		// 如果有多个 options，会创建多个 compiler
 		compiler = new MultiCompiler(
 			Array.from(options).map(options => webpack(options))
 		);
-	} else if (typeof options === "object") {
+	} 
+	
+	else if (typeof options === "object") {
 		options = new WebpackOptionsDefaulter().process(options);
-
+		// 实例化一个 compiler
 		compiler = new Compiler(options.context);
 		compiler.options = options;
 		new NodeEnvironmentPlugin({
