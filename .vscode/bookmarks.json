@@ -1,0 +1,44 @@
+{
+	"files": [
+		{
+			"path": "webpack/bin/webpack.js",
+			"bookmarks": [
+				{
+					"line": 1,
+					"column": 0,
+					"label": "webpack入口文件"
+				}
+			]
+		},
+		{
+			"path": "webpack-cli/bin/cli.js",
+			"bookmarks": [
+				{
+					"line": 1,
+					"column": 0,
+					"label": "webpack-cli 入口"
+				}
+			]
+		},
+		{
+			"path": "webpack-cli/bin/config/config-yargs.js",
+			"bookmarks": [
+				{
+					"line": 1,
+					"column": 4,
+					"label": "查看所有 webpack --xx 这样能配置的命令"
+				},
+				{
+					"line": 84,
+					"column": 47,
+					"label": "我们经常写的 webpack --config webpack.config.js"
+				},
+				{
+					"line": 163,
+					"column": 47,
+					"label": "以后写 webpack.config.js，不知道配置的字段名，就在这里找，哈哈~"
+				}
+			]
+		}
+	]
+}
