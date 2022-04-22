@@ -71,6 +71,9 @@ class WebpackOptionsApply extends OptionsApply {
 			let NodeTemplatePlugin;
 
 			switch (options.target) {
+			
+				// 根据不同的 target 配置，注入一些内置插件，每个插件都执行 apply 方法订阅事件，传入回调
+
 				case "web":
 					JsonpTemplatePlugin = require("./web/JsonpTemplatePlugin");
 					FetchCompileWasmTemplatePlugin = require("./web/FetchCompileWasmTemplatePlugin");
@@ -83,6 +86,8 @@ class WebpackOptionsApply extends OptionsApply {
 					new NodeSourcePlugin(options.node).apply(compiler);
 					new LoaderTargetPlugin(options.target).apply(compiler);
 					break;
+
+
 				case "webworker": {
 					let WebWorkerTemplatePlugin = require("./webworker/WebWorkerTemplatePlugin");
 					FetchCompileWasmTemplatePlugin = require("./web/FetchCompileWasmTemplatePlugin");
@@ -96,6 +101,8 @@ class WebpackOptionsApply extends OptionsApply {
 					new LoaderTargetPlugin(options.target).apply(compiler);
 					break;
 				}
+
+
 				case "node":
 				case "async-node":
 					NodeTemplatePlugin = require("./node/NodeTemplatePlugin");
@@ -111,6 +118,8 @@ class WebpackOptionsApply extends OptionsApply {
 					new NodeTargetPlugin().apply(compiler);
 					new LoaderTargetPlugin("node").apply(compiler);
 					break;
+
+
 				case "node-webkit":
 					JsonpTemplatePlugin = require("./web/JsonpTemplatePlugin");
 					NodeTargetPlugin = require("./node/NodeTargetPlugin");
@@ -121,6 +130,8 @@ class WebpackOptionsApply extends OptionsApply {
 					new ExternalsPlugin("commonjs", "nw.gui").apply(compiler);
 					new LoaderTargetPlugin(options.target).apply(compiler);
 					break;
+
+
 				case "electron-main":
 					NodeTemplatePlugin = require("./node/NodeTemplatePlugin");
 					NodeTargetPlugin = require("./node/NodeTargetPlugin");
@@ -157,6 +168,8 @@ class WebpackOptionsApply extends OptionsApply {
 					]).apply(compiler);
 					new LoaderTargetPlugin(options.target).apply(compiler);
 					break;
+
+
 				case "electron-renderer":
 				case "electron-preload":
 					FetchCompileWasmTemplatePlugin = require("./web/FetchCompileWasmTemplatePlugin");
@@ -192,7 +205,9 @@ class WebpackOptionsApply extends OptionsApply {
 					]).apply(compiler);
 					new LoaderTargetPlugin(options.target).apply(compiler);
 					break;
-				default:
+				
+				
+					default:
 					throw new Error("Unsupported target '" + options.target + "'.");
 			}
 		}
@@ -241,13 +256,13 @@ class WebpackOptionsApply extends OptionsApply {
 			comment =
 				legacy && modern
 					? "\n/*\n//@ source" +
-					  "MappingURL=[url]\n//# source" +
-					  "MappingURL=[url]\n*/"
+					"MappingURL=[url]\n//# source" +
+					"MappingURL=[url]\n*/"
 					: legacy
-					? "\n/*\n//@ source" + "MappingURL=[url]\n*/"
-					: modern
-					? "\n//# source" + "MappingURL=[url]"
-					: null;
+						? "\n/*\n//@ source" + "MappingURL=[url]\n*/"
+						: modern
+							? "\n//# source" + "MappingURL=[url]"
+							: null;
 			const Plugin = evalWrapped
 				? EvalSourceMapDevToolPlugin
 				: SourceMapDevToolPlugin;
@@ -270,10 +285,10 @@ class WebpackOptionsApply extends OptionsApply {
 				legacy && modern
 					? "\n//@ sourceURL=[url]\n//# sourceURL=[url]"
 					: legacy
-					? "\n//@ sourceURL=[url]"
-					: modern
-					? "\n//# sourceURL=[url]"
-					: null;
+						? "\n//@ sourceURL=[url]"
+						: modern
+							? "\n//# sourceURL=[url]"
+							: null;
 			new EvalDevToolModulePlugin({
 				sourceUrlComment: comment,
 				moduleFilenameTemplate: options.output.devtoolModuleFilenameTemplate,

@@ -47,6 +47,11 @@
 					"line": 1,
 					"column": 1,
 					"label": "执行，返回 webpack 编译器"
+				},
+				{
+					"line": 53,
+					"column": 18,
+					"label": "处理 plugins 数组"
 				}
 			]
 		},

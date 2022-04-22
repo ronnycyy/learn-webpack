@@ -1,3 +1,5 @@
+// 模拟 Compiler 对象
+
 const {
     SyncHook,
     AsyncSeriesHook
@@ -11,6 +13,7 @@ module.exports = class Compiler {
             calculateRoutes: new AsyncSeriesHook(["source", "target", "routesList"])
         }
     }
+    // 主方法
     run(){
         this.accelerate(10)
         this.break()

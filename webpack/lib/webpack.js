@@ -32,16 +32,16 @@ const webpack = (options, callback) => {
 	if (webpackOptionsValidationErrors.length) {
 		throw new WebpackOptionsValidationError(webpackOptionsValidationErrors);
 	}
-	let compiler;
 
+
+	let compiler;
 
 	if (Array.isArray(options)) {
 		// 如果有多个 options，会创建多个 compiler
 		compiler = new MultiCompiler(
 			Array.from(options).map(options => webpack(options))
 		);
-	} 
-	
+	}
 	else if (typeof options === "object") {
 		options = new WebpackOptionsDefaulter().process(options);
 		// 实例化一个 compiler
@@ -50,15 +50,27 @@ const webpack = (options, callback) => {
 		new NodeEnvironmentPlugin({
 			infrastructureLogging: options.infrastructureLogging
 		}).apply(compiler);
+
+		// 处理 plugins 数组，得出结论:
+		// 1. plugin 上必须有 apply 方法，用于传入 compiler 对象
+		// 2. plugin 监听 tapable 的事件
 		if (options.plugins && Array.isArray(options.plugins)) {
 			for (const plugin of options.plugins) {
 				if (typeof plugin === "function") {
 					plugin.call(compiler, compiler);
 				} else {
+					/**
+					 * 插件对象的 apply 方法负责： 订阅 compiler 事件，传入回调。
+					 * 
+					 * apply(compiler) {
+					 * 	compiler.hooks.brake.tap("WarningLampPlugin", () => console.log('WarningLampPlugin'));
+					 * }
+					 */
 					plugin.apply(compiler);
 				}
 			}
 		}
+		// 发布事件
 		compiler.hooks.environment.call();
 		compiler.hooks.afterEnvironment.call();
 		compiler.options = new WebpackOptionsApply().process(options, compiler);
