@@ -10,6 +10,11 @@ module.exports = function (source) {
   // 获取用户传给本 loader 的参数
   const option = loaderUtils.getOptions(this);
 
+  // 是否关掉缓存
+  this.cacheable(false);
+
+  // file-loader 使用的文件读写功能🐂
+
   // 异步 loader 回调
   const callback = this.async();
 

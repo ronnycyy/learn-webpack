@@ -1,0 +1,1 @@
+console.log('像 file-loader 一样加载本文件，写到 dist 里');
