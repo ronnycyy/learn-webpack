@@ -1,4 +1,10 @@
 /*
+	webpack 编译器
+	
+	[webpack 流程篇] 准备阶段
+
+	事件一个个触发，在本类的 this.hook 定义了事件
+
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Tobias Koppers @sokra
 */
@@ -39,21 +45,34 @@ const { Logger } = require("./logging/Logger");
  * @property {Set<string>} compilationDependencies
  */
 
-// 编译器 继承了 水龙头🚰1 ？？？
+// 编译器 继承了 水龙头🚰1  【注册 - 分发模式 】
 class Compiler extends Tapable {
 	constructor(context) {
 		super();
+
+		// 按这个图里的顺序触发事件
+		// webpack原理流程图/progress.png
 		this.hooks = {
 			/** @type {SyncBailHook<Compilation>} */
 			shouldEmit: new SyncBailHook(["compilation"]),
-			/** @type {AsyncSeriesHook<Stats>} */
+
+			/**
+			 * 我们熟悉的 done 事件 !! 整个过程构建完成就触发🔥
+			 *  @type {AsyncSeriesHook<Stats>}
+			 *  */
 			done: new AsyncSeriesHook(["stats"]),
+
 			/** @type {AsyncSeriesHook<>} */
 			additionalPass: new AsyncSeriesHook([]),
 			/** @type {AsyncSeriesHook<Compiler>} */
 			beforeRun: new AsyncSeriesHook(["compiler"]),
-			/** @type {AsyncSeriesHook<Compiler>} */
+
+			/** 
+			 * 开始编译 
+			 * @type {AsyncSeriesHook<Compiler>}
+			 *  */
 			run: new AsyncSeriesHook(["compiler"]),
+
 			/** @type {AsyncSeriesHook<Compilation>} */
 			emit: new AsyncSeriesHook(["compilation"]),
 			/** @type {AsyncSeriesHook<string, Buffer>} */
@@ -61,8 +80,12 @@ class Compiler extends Tapable {
 			/** @type {AsyncSeriesHook<Compilation>} */
 			afterEmit: new AsyncSeriesHook(["compilation"]),
 
-			/** @type {SyncHook<Compilation, CompilationParams>} */
+			/**
+			 * 插件有自己的构建流程，比如 HtmlWebpackPlugin
+			 *  @type {SyncHook<Compilation, CompilationParams>}
+			 *  */
 			thisCompilation: new SyncHook(["compilation", "params"]),
+
 			/** @type {SyncHook<Compilation, CompilationParams>} */
 			compilation: new SyncHook(["compilation", "params"]),
 			/** @type {SyncHook<NormalModuleFactory>} */
@@ -74,8 +97,12 @@ class Compiler extends Tapable {
 			beforeCompile: new AsyncSeriesHook(["params"]),
 			/** @type {SyncHook<CompilationParams>} */
 			compile: new SyncHook(["params"]),
-			/** @type {AsyncParallelHook<Compilation>} */
+
+			/**
+			 * 从 entry 开始递归地分析依赖，build 每个模块 
+			 * @type {AsyncParallelHook<Compilation>} */
 			make: new AsyncParallelHook(["compilation"]),
+
 			/** @type {AsyncSeriesHook<Compilation>} */
 			afterCompile: new AsyncSeriesHook(["compilation"]),
 
@@ -101,8 +128,12 @@ class Compiler extends Tapable {
 			afterPlugins: new SyncHook(["compiler"]),
 			/** @type {SyncHook<Compiler>} */
 			afterResolvers: new SyncHook(["compiler"]),
-			/** @type {SyncBailHook<string, Entry>} */
+
+			/**
+			 * 初始化 option 
+			 * @type {SyncBailHook<string, Entry>} */
 			entryOption: new SyncBailHook(["context", "entry"])
+
 		};
 		// TODO webpack 5 remove this
 		this.hooks.infrastructurelog = this.hooks.infrastructureLog;
@@ -265,6 +296,7 @@ class Compiler extends Tapable {
 		const onCompiled = (err, compilation) => {
 			if (err) return finalCallback(err);
 
+			// 判断资源是否生成，没生成直接返回了👋👋
 			if (this.hooks.shouldEmit.call(compilation) === false) {
 				const stats = new Stats(compilation);
 				stats.startTime = startTime;
@@ -276,8 +308,11 @@ class Compiler extends Tapable {
 				return;
 			}
 
+			// [webpack 流程篇] 准备阶段: 5. 资源已经生成，开始构建🚗🚗🚗......
 			this.emitAssets(compilation, err => {
 				if (err) return finalCallback(err);
+
+				// 预告: 模块构建 && 依赖分析
 
 				if (compilation.hooks.needAdditionalPass.call()) {
 					compilation.needAdditionalPass = true;
@@ -310,9 +345,11 @@ class Compiler extends Tapable {
 			});
 		};
 
+		// [webpack 流程篇] 准备阶段: 4. Compiler 主逻辑: 发布 beforeRun 事件， NodeEnvironmentPlugin 订阅了，会去清理缓存
 		this.hooks.beforeRun.callAsync(this, err => {
 			if (err) return finalCallback(err);
 
+			// 搞定以后发布 run 事件
 			this.hooks.run.callAsync(this, err => {
 				if (err) return finalCallback(err);
 

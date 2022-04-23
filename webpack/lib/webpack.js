@@ -43,10 +43,16 @@ const webpack = (options, callback) => {
 		);
 	}
 	else if (typeof options === "object") {
+
+		// [webpack 流程篇] 准备阶段:  1. 设置一些 webpack 初始配置
 		options = new WebpackOptionsDefaulter().process(options);
 		// 实例化一个 compiler
 		compiler = new Compiler(options.context);
 		compiler.options = options;
+
+		// [webpack 流程篇] 准备阶段:  2. 在 entry-option 和 run 事件之间会触发 beforeRun 事件，这里是订阅 beforeRun 事件
+		// this.hook.beforeRun.tap(..., callback)
+		// 清理构建的缓存
 		new NodeEnvironmentPlugin({
 			infrastructureLogging: options.infrastructureLogging
 		}).apply(compiler);
@@ -73,6 +79,15 @@ const webpack = (options, callback) => {
 		// 发布事件
 		compiler.hooks.environment.call();
 		compiler.hooks.afterEnvironment.call();
+		/** 
+		 * [webpack 流程篇] 准备阶段:  3. 触发 entry-option 事件
+		 * compiler.hooks.entryOption.call(options.context, options.entry);
+		 * 
+		 * 将所有的配置 options 参数转换成 webpack 内部插件，如:
+		 * output.library => LibraryTemplatePlugin
+		 * output.externals => ExternalsPlugin
+		 * ...
+		 *  */
 		compiler.options = new WebpackOptionsApply().process(options, compiler);
 	} else {
 		throw new Error("Invalid argument: options");

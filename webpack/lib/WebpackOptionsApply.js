@@ -71,7 +71,7 @@ class WebpackOptionsApply extends OptionsApply {
 			let NodeTemplatePlugin;
 
 			switch (options.target) {
-			
+
 				// 根据不同的 target 配置，注入一些内置插件，每个插件都执行 apply 方法订阅事件，传入回调
 
 				case "web":
@@ -205,9 +205,9 @@ class WebpackOptionsApply extends OptionsApply {
 					]).apply(compiler);
 					new LoaderTargetPlugin(options.target).apply(compiler);
 					break;
-				
-				
-					default:
+
+
+				default:
 					throw new Error("Unsupported target '" + options.target + "'.");
 			}
 		}
@@ -303,6 +303,7 @@ class WebpackOptionsApply extends OptionsApply {
 		}).apply(compiler);
 
 		new EntryOptionPlugin().apply(compiler);
+		// [webpack 流程篇] 准备阶段:  3. 触发 entry-option 事件
 		compiler.hooks.entryOption.call(options.context, options.entry);
 
 		new CompatibilityPlugin().apply(compiler);

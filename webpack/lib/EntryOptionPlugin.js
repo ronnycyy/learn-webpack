@@ -30,14 +30,30 @@ module.exports = class EntryOptionPlugin {
 	 * @returns {void}
 	 */
 	apply(compiler) {
+		// 监听了 entryOption 事件
 		compiler.hooks.entryOption.tap("EntryOptionPlugin", (context, entry) => {
+
 			if (typeof entry === "string" || Array.isArray(entry)) {
 				itemToPlugin(context, entry, "main").apply(compiler);
-			} else if (typeof entry === "object") {
+			}
+
+			else if (typeof entry === "object") {
+				/**
+				 * 把一个个对象的属性转成一个个单个的 entry 进行处理
+				 * 
+				 * entry = {
+						index: '/Users/chenyunyi/Desktop/webpack/learn-webpack/demo0/src/index/index.js',
+						search: '/Users/chenyunyi/Desktop/webpack/learn-webpack/demo0/src/search/index.js'
+					}
+				 */
 				for (const name of Object.keys(entry)) {
 					itemToPlugin(context, entry[name], name).apply(compiler);
 				}
-			} else if (typeof entry === "function") {
+			}
+
+			// entry 是一个函数，这么奇葩🌹
+			else if (typeof entry === "function") {
+				// 动态处理
 				new DynamicEntryPlugin(context, entry).apply(compiler);
 			}
 			return true;

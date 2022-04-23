@@ -16,6 +16,7 @@ class NodeEnvironmentPlugin {
 		this.options = options || {};
 	}
 
+	// 插件的 apply，用于注册事件回调
 	apply(compiler) {
 		compiler.infrastructureLogger = createConsoleLogger(
 			Object.assign(
@@ -36,6 +37,9 @@ class NodeEnvironmentPlugin {
 		compiler.watchFileSystem = new NodeWatchFileSystem(
 			compiler.inputFileSystem
 		);
+
+		// [webpack 流程篇] 准备阶段:  在 entry-option 和 run 事件之间触发 beforeRun 事件
+		// 是 beforeRun 事件，不是 NodeEnvironmentPlugin 事件啊 !!!!!!! 😠😠🔥🔥🔥
 		compiler.hooks.beforeRun.tap("NodeEnvironmentPlugin", compiler => {
 			if (compiler.inputFileSystem === inputFileSystem) inputFileSystem.purge();
 		});

@@ -31,6 +31,9 @@ class WebpackOptionsDefaulter extends OptionsDefaulter {
 	constructor() {
 		super();
 
+
+		// [webpack 流程篇] 准备阶段:  设置一些 webpack 初始配置
+
 		this.set("entry", "./src");
 
 		this.set("devtool", "make", options =>
@@ -68,8 +71,8 @@ class WebpackOptionsDefaulter extends OptionsDefaulter {
 				resolve: {
 					mainFields:
 						options.target === "web" ||
-						options.target === "webworker" ||
-						options.target === "electron-renderer"
+							options.target === "webworker" ||
+							options.target === "electron-renderer"
 							? ["browser", "main"]
 							: ["main"]
 				}

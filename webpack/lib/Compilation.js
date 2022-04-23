@@ -251,6 +251,8 @@ class Compilation extends Tapable {
 	constructor(compiler) {
 		super();
 		this.hooks = {
+
+			// 模块构建相关 hook
 			/** @type {SyncHook<Module>} */
 			buildModule: new SyncHook(["module"]),
 			/** @type {SyncHook<Module>} */
@@ -260,6 +262,7 @@ class Compilation extends Tapable {
 			/** @type {SyncHook<Module>} */
 			succeedModule: new SyncHook(["module"]),
 
+			// entry 相关  hook
 			/** @type {SyncHook<Dependency, string>} */
 			addEntry: new SyncHook(["entry", "name"]),
 			/** @type {SyncHook<Dependency, string, Error>} */
@@ -278,9 +281,13 @@ class Compilation extends Tapable {
 			finishModules: new AsyncSeriesHook(["modules"]),
 			/** @type {SyncHook<Module>} */
 			finishRebuildingModule: new SyncHook(["module"]),
-			/** @type {SyncHook} */
+			/**
+			 * 没有构建完成 
+			 * @type {SyncHook} */
 			unseal: new SyncHook([]),
-			/** @type {SyncHook} */
+			/**
+			 * 成功构建 
+			 * @type {SyncHook} */
 			seal: new SyncHook([]),
 
 			/** @type {SyncHook} */
@@ -437,6 +444,8 @@ class Compilation extends Tapable {
 			/** @type {SyncHook<Chunk[]>} */
 			afterOptimizeExtractedChunks: new SyncHook(["chunks"])
 		};
+
+		// 模块编译、打包、优化
 		this._pluginCompat.tap("Compilation", options => {
 			switch (options.name) {
 				case "optimize-tree":
@@ -448,6 +457,7 @@ class Compilation extends Tapable {
 					break;
 			}
 		});
+
 		/** @type {string=} */
 		this.name = undefined;
 		/** @type {Compiler} */
@@ -2282,8 +2292,8 @@ class Compilation extends Tapable {
 	}
 }
 
-	// TODO remove in webpack 5
-	Compilation.prototype.applyPlugins = util.deprecate(
+// TODO remove in webpack 5
+Compilation.prototype.applyPlugins = util.deprecate(
 	/**
 	 * @deprecated
 	 * @param {string} name Name
@@ -2292,39 +2302,39 @@ class Compilation extends Tapable {
 	 * @this {Compilation}
 	 */
 	function (name, ...args) {
-	this.hooks[
-	name.replace(/[-]([a-z]) /g, match => match[1].toUpperCase())
-].call(...args);
-},
+		this.hooks[
+			name.replace(/[-]([a-z]) /g, match => match[1].toUpperCase())
+		].call(...args);
+	},
 	"Compilation.applyPlugins is deprecated. Use new API on `.hooks` instead"
 );
 
-	// TODO remove in webpack 5
-	Object.defineProperty(Compilation.prototype, "moduleTemplate", {
+// TODO remove in webpack 5
+Object.defineProperty(Compilation.prototype, "moduleTemplate", {
 	configurable: false,
 	get: util.deprecate(
-	/**
-	 * @deprecated
-	 * @this {Compilation}
-	 * @returns {TODO} module template
-	 */
-	function () {
-	return this.moduleTemplates.javascript;
-},
-	"Compilation.moduleTemplate: Use Compilation.moduleTemplates.javascript instead"
-),
+		/**
+		 * @deprecated
+		 * @this {Compilation}
+		 * @returns {TODO} module template
+		 */
+		function () {
+			return this.moduleTemplates.javascript;
+		},
+		"Compilation.moduleTemplate: Use Compilation.moduleTemplates.javascript instead"
+	),
 	set: util.deprecate(
-	/**
-	 * @deprecated
-	 * @param {ModuleTemplate} value Template value
-	 * @this {Compilation}
-	 * @returns {void}
-	 */
-	function (value) {
-	this.moduleTemplates.javascript = value;
-},
-	"Compilation.moduleTemplate: Use Compilation.moduleTemplates.javascript instead."
-)
+		/**
+		 * @deprecated
+		 * @param {ModuleTemplate} value Template value
+		 * @this {Compilation}
+		 * @returns {void}
+		 */
+		function (value) {
+			this.moduleTemplates.javascript = value;
+		},
+		"Compilation.moduleTemplate: Use Compilation.moduleTemplates.javascript instead."
+	)
 });
 
 module.exports = Compilation;

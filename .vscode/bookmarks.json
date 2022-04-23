@@ -49,9 +49,29 @@
 					"label": "执行，返回 webpack 编译器"
 				},
 				{
-					"line": 53,
+					"line": 46,
+					"column": 46,
+					"label": "[webpack 流程篇] 准备阶段:  1. 设置一些 webpack 初始配置"
+				},
+				{
+					"line": 52,
+					"column": 89,
+					"label": "[webpack 流程篇] 准备阶段:  2. 在 entry-option 和 run 事件之间会触发 beforeRun 事件，这里是订阅 beforeRun 事件"
+				},
+				{
+					"line": 59,
 					"column": 18,
 					"label": "处理 plugins 数组"
+				},
+				{
+					"line": 81,
+					"column": 5,
+					"label": "[webpack 流程篇] 准备阶段:  3. 触发 entry-option 事件"
+				},
+				{
+					"line": 85,
+					"column": 38,
+					"label": "将所有的配置 options 参数转换成 webpack 内部插件"
 				}
 			]
 		},
@@ -62,6 +82,36 @@
 					"line": 2,
 					"column": 0,
 					"label": "Tapable 类似于 Node.js 的 EventEmitter 库，控制 hook 的发布与订阅，控制 webpack 插件系统。"
+				}
+			]
+		},
+		{
+			"path": "webpack/lib/Compiler.js",
+			"bookmarks": [
+				{
+					"line": 4,
+					"column": 1,
+					"label": ""
+				},
+				{
+					"line": 310,
+					"column": 40,
+					"label": "[webpack 流程篇] 准备阶段: 5. 资源已经生成，开始构建"
+				},
+				{
+					"line": 347,
+					"column": 91,
+					"label": "[webpack 流程篇] 准备阶段: 4. Compiler 主逻辑: 发布 beforeRun 事件， NodeEnvironmentPlugin 订阅了，会去清理缓存"
+				}
+			]
+		},
+		{
+			"path": "webpack/lib/WebpackOptionsApply.js",
+			"bookmarks": [
+				{
+					"line": 305,
+					"column": 47,
+					"label": "[webpack 流程篇] 准备阶段:  3. 触发 entry-option 事件"
 				}
 			]
 		}
