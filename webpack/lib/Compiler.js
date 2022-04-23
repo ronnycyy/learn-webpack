@@ -530,6 +530,7 @@ class Compiler extends Tapable {
 			);
 		};
 
+		// webpack 流程篇] 文件生成: 4. 到达 emit 阶段，通过注册的 emit 回调，将内容输出到磁盘里
 		this.hooks.emit.callAsync(compilation, err => {
 			if (err) return callback(err);
 			outputPath = compilation.getPath(this.outputPath);

@@ -506,13 +506,13 @@ class Compilation extends Tapable {
 		this.namedChunkGroups = new Map();
 		/** @type {Map<string, Chunk>} */
 		this.namedChunks = new Map();
-		
+
 		/**
 		 * loaders构建完成的模块 
 		 * @type {Module[]}
 		 *  */
 		this.modules = [];
-		
+
 		/** @private @type {Map<string, Module>} */
 		this._modules = new Map();
 		this.cache = null;
@@ -1164,7 +1164,7 @@ class Compilation extends Tapable {
 	}
 
 	/**
-	 *
+	 * 将入口文件添加进来
 	 * @param {string} context context path for entry
 	 * @param {Dependency} entry entry dependency being created
 	 * @param {string} name name of entry
@@ -1311,6 +1311,7 @@ class Compilation extends Tapable {
 	}
 
 	/**
+	 * [webpack 流程篇] 文件生成: 1. 进行一系列的优化工作，比如 optimize、optimizeChunks 事件
 	 * @param {Callback} callback signals when the seal method is finishes
 	 * @returns {void}
 	 */
@@ -1417,6 +1418,9 @@ class Compilation extends Tapable {
 			}
 
 			this.hooks.beforeHash.call();
+			// [webpack 流程篇] 文件生成: 2. 列表中的文件需要 hash 区分，比如:
+			// [chunkhash].js
+			// [contenthash].css
 			this.createHash();
 			this.hooks.afterHash.call();
 
@@ -1425,7 +1429,11 @@ class Compilation extends Tapable {
 			}
 
 			this.hooks.beforeModuleAssets.call();
+			// webpack 流程篇] 文件生成: 3. 经过 loader 转换的 module，放到 compilation.assets 上
+			// 整个 seal 阶段完成🎉
+			// 接下来进入 emit 阶段🚗...，到 Compiler.js 的 emitAssets 方法里去吧!
 			this.createModuleAssets();
+
 			if (this.hooks.shouldGenerateChunkAssets.call() !== false) {
 				this.hooks.beforeChunkAssets.call();
 				this.createChunkAssets();
@@ -2020,6 +2028,7 @@ class Compilation extends Tapable {
 	}
 
 	/**
+	 * 根据用户传入的哈希，更改 hash 方式，比如 chunkhash、contenthash。
 	 * @param {string} update extra information
 	 * @returns {void}
 	 */
@@ -2127,10 +2136,15 @@ class Compilation extends Tapable {
 	createModuleAssets() {
 		for (let i = 0; i < this.modules.length; i++) {
 			const module = this.modules[i];
+
+			// 经过 loader/parser 转换的 module
 			if (module.buildInfo.assets) {
+
 				const assetsInfo = module.buildInfo.assetsInfo;
 				for (const assetName of Object.keys(module.buildInfo.assets)) {
 					const fileName = this.getPath(assetName);
+
+					// 放到 compilation.assets[fileName] 上
 					this.emitAsset(
 						fileName,
 						module.buildInfo.assets[assetName],
@@ -2140,6 +2154,8 @@ class Compilation extends Tapable {
 				}
 			}
 		}
+
+		// 整个 seal 阶段完成🎉
 	}
 
 	createChunkAssets() {
@@ -2313,8 +2329,8 @@ class Compilation extends Tapable {
 	}
 }
 
-// TODO remove in webpack 5
-Compilation.prototype.applyPlugins = util.deprecate(
+	// TODO remove in webpack 5
+	Compilation.prototype.applyPlugins = util.deprecate(
 	/**
 	 * @deprecated
 	 * @param {string} name Name
@@ -2323,39 +2339,39 @@ Compilation.prototype.applyPlugins = util.deprecate(
 	 * @this {Compilation}
 	 */
 	function (name, ...args) {
-		this.hooks[
-			name.replace(/[-]([a-z]) /g, match => match[1].toUpperCase())
-		].call(...args);
-	},
+	this.hooks[
+	name.replace(/[-]([a-z]) /g, match => match[1].toUpperCase())
+].call(...args);
+},
 	"Compilation.applyPlugins is deprecated. Use new API on `.hooks` instead"
 );
 
-// TODO remove in webpack 5
-Object.defineProperty(Compilation.prototype, "moduleTemplate", {
+	// TODO remove in webpack 5
+	Object.defineProperty(Compilation.prototype, "moduleTemplate", {
 	configurable: false,
 	get: util.deprecate(
-		/**
-		 * @deprecated
-		 * @this {Compilation}
-		 * @returns {TODO} module template
-		 */
-		function () {
-			return this.moduleTemplates.javascript;
-		},
-		"Compilation.moduleTemplate: Use Compilation.moduleTemplates.javascript instead"
-	),
+	/**
+	 * @deprecated
+	 * @this {Compilation}
+	 * @returns {TODO} module template
+	 */
+	function () {
+	return this.moduleTemplates.javascript;
+},
+	"Compilation.moduleTemplate: Use Compilation.moduleTemplates.javascript instead"
+),
 	set: util.deprecate(
-		/**
-		 * @deprecated
-		 * @param {ModuleTemplate} value Template value
-		 * @this {Compilation}
-		 * @returns {void}
-		 */
-		function (value) {
-			this.moduleTemplates.javascript = value;
-		},
-		"Compilation.moduleTemplate: Use Compilation.moduleTemplates.javascript instead."
-	)
+	/**
+	 * @deprecated
+	 * @param {ModuleTemplate} value Template value
+	 * @this {Compilation}
+	 * @returns {void}
+	 */
+	function (value) {
+	this.moduleTemplates.javascript = value;
+},
+	"Compilation.moduleTemplate: Use Compilation.moduleTemplates.javascript instead."
+)
 });
 
 module.exports = Compilation;

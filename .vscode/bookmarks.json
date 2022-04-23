@@ -107,6 +107,11 @@
 					"line": 351,
 					"column": 91,
 					"label": "[webpack 流程篇] 准备阶段: 4. Compiler 主逻辑: 发布 beforeRun 事件， NodeEnvironmentPlugin 订阅了，会去清理缓存"
+				},
+				{
+					"line": 532,
+					"column": 61,
+					"label": "webpack 流程篇] 文件生成: 4. 到达 emit 阶段，通过注册的 emit 回调，将内容输出到磁盘里"
 				}
 			]
 		},
@@ -117,6 +122,11 @@
 					"line": 735,
 					"column": 41,
 					"label": "[webpack 流程篇] 模块构建和chunk生成: 2. 构建单个模块"
+				},
+				{
+					"line": 1313,
+					"column": 67,
+					"label": "[webpack 流程篇] 文件生成: 1. 进行一系列的优化工作，比如 optimize、optimizeChunks 事件"
 				}
 			]
 		},
