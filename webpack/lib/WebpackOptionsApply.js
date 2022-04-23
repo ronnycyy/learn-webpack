@@ -301,7 +301,7 @@ class WebpackOptionsApply extends OptionsApply {
 		new WebAssemblyModulesPlugin({
 			mangleImports: options.optimization.mangleWasmImports
 		}).apply(compiler);
-
+		
 		new EntryOptionPlugin().apply(compiler);
 		// [webpack 流程篇] 准备阶段:  3. 触发 entry-option 事件
 		compiler.hooks.entryOption.call(options.context, options.entry);

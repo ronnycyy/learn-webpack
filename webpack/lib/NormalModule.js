@@ -1,4 +1,6 @@
 /*
+	普通模块
+
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Tobias Koppers @sokra
 */
@@ -292,9 +294,12 @@ class NormalModule extends Module {
 			fs
 		);
 
+		// 调起 loaders
 		runLoaders(
 			{
+				// 静态资源，如 src/Login.tsx
 				resource: this.resource,
+				// loader，如 babel-loader
 				loaders: this.loaders,
 				context: loaderContext,
 				readResource: fs.readFile.bind(fs)
@@ -331,12 +336,11 @@ class NormalModule extends Module {
 				if (!Buffer.isBuffer(source) && typeof source !== "string") {
 					const currentLoader = this.getCurrentLoader(loaderContext, 0);
 					const err = new Error(
-						`Final loader (${
-							currentLoader
-								? compilation.runtimeTemplate.requestShortener.shorten(
-										currentLoader.loader
-								  )
-								: "unknown"
+						`Final loader (${currentLoader
+							? compilation.runtimeTemplate.requestShortener.shorten(
+								currentLoader.loader
+							)
+							: "unknown"
 						}) didn't return a Buffer or String`
 					);
 					const error = new ModuleBuildError(this, err);
@@ -351,8 +355,8 @@ class NormalModule extends Module {
 				this._sourceSize = null;
 				this._ast =
 					typeof extraInfo === "object" &&
-					extraInfo !== null &&
-					extraInfo.webpackAST !== undefined
+						extraInfo !== null &&
+						extraInfo.webpackAST !== undefined
 						? extraInfo.webpackAST
 						: null;
 				return callback();
@@ -424,6 +428,8 @@ class NormalModule extends Module {
 		this._buildHash = /** @type {string} */ (hash.digest("hex"));
 	}
 
+	// compilation 的 module.build 会调到这里
+	// 调 loader 来构建自己
 	build(options, compilation, resolver, fs, callback) {
 		this.buildTimestamp = Date.now();
 		this.built = true;
@@ -479,6 +485,8 @@ class NormalModule extends Module {
 			};
 
 			try {
+				// 来自 Parser.js
+				// 模块依赖，比如 js 的 require，添加到列表里，并且不断地构建
 				const result = this.parser.parse(
 					this._ast || this._source.source(),
 					{

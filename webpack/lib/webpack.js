@@ -83,7 +83,8 @@ const webpack = (options, callback) => {
 		 * [webpack 流程篇] 准备阶段:  3. 触发 entry-option 事件
 		 * compiler.hooks.entryOption.call(options.context, options.entry);
 		 * 
-		 * 将所有的配置 options 参数转换成 webpack 内部插件，如:
+		 * 1. 处理单/多入口文件
+		 * 2. 将所有的配置 options 参数转换成 webpack 内部插件，如:
 		 * output.library => LibraryTemplatePlugin
 		 * output.externals => ExternalsPlugin
 		 * ...

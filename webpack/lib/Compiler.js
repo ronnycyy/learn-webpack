@@ -5,6 +5,8 @@
 
 	事件一个个触发，在本类的 this.hook 定义了事件
 
+	run 方法 发布 before-run、run 事件
+
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Tobias Koppers @sokra
 */
@@ -51,7 +53,7 @@ class Compiler extends Tapable {
 		super();
 
 		// 按这个图里的顺序触发事件
-		// webpack原理流程图/progress.png
+		// webpack原理图/progress.png
 		this.hooks = {
 			/** @type {SyncBailHook<Compilation>} */
 			shouldEmit: new SyncBailHook(["compilation"]),
@@ -325,6 +327,8 @@ class Compiler extends Tapable {
 
 						this.hooks.additionalPass.callAsync(err => {
 							if (err) return finalCallback(err);
+
+							// [webpack 流程篇] 模块构建和chunk生成: 1. 入口
 							this.compile(onCompiled);
 						});
 					});
@@ -688,13 +692,17 @@ class Compiler extends Tapable {
 
 	newCompilationParams() {
 		const params = {
+			// 普通模块
 			normalModuleFactory: this.createNormalModuleFactory(),
+			// ./src/a 
+			// ./src/b
 			contextModuleFactory: this.createContextModuleFactory(),
 			compilationDependencies: new Set()
 		};
 		return params;
 	}
 
+	// 模块构建 & 资源生成
 	compile(callback) {
 		const params = this.newCompilationParams();
 		this.hooks.beforeCompile.callAsync(params, err => {
@@ -704,12 +712,16 @@ class Compiler extends Tapable {
 
 			const compilation = this.newCompilation(params);
 
+			// 发布 make 事件
+			// 从entry开始，递归分析依赖，build 每个依赖模块
+			// 很多 EntryPlugin 订阅了 make 事件，比如 SingleEntryPlugin，它 apply 的时候会往 compilation 中加一个入口
 			this.hooks.make.callAsync(compilation, err => {
 				if (err) return callback(err);
 
 				compilation.finish(err => {
 					if (err) return callback(err);
 
+					// 构建完毕，资源生成
 					compilation.seal(err => {
 						if (err) return callback(err);
 

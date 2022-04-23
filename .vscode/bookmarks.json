@@ -69,7 +69,7 @@
 					"label": "[webpack 流程篇] 准备阶段:  3. 触发 entry-option 事件"
 				},
 				{
-					"line": 85,
+					"line": 86,
 					"column": 38,
 					"label": "将所有的配置 options 参数转换成 webpack 内部插件"
 				}
@@ -94,14 +94,29 @@
 					"label": ""
 				},
 				{
-					"line": 310,
+					"line": 312,
 					"column": 40,
 					"label": "[webpack 流程篇] 准备阶段: 5. 资源已经生成，开始构建"
 				},
 				{
-					"line": 347,
+					"line": 330,
+					"column": 10,
+					"label": "[webpack 流程篇] 模块构建和chunk生成: 1. 入口"
+				},
+				{
+					"line": 351,
 					"column": 91,
 					"label": "[webpack 流程篇] 准备阶段: 4. Compiler 主逻辑: 发布 beforeRun 事件， NodeEnvironmentPlugin 订阅了，会去清理缓存"
+				}
+			]
+		},
+		{
+			"path": "webpack/lib/Compilation.js",
+			"bookmarks": [
+				{
+					"line": 735,
+					"column": 41,
+					"label": "[webpack 流程篇] 模块构建和chunk生成: 2. 构建单个模块"
 				}
 			]
 		},

@@ -43,6 +43,9 @@ class SingleEntryPlugin {
 				const { entry, name, context } = this;
 
 				const dep = SingleEntryPlugin.createDependency(entry, name);
+
+				// 往配置里添加一个 入口
+				// make 阶段正式开始！！🎉🎉
 				compilation.addEntry(context, dep, name, callback);
 			}
 		);

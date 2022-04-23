@@ -40,6 +40,7 @@ class NodeEnvironmentPlugin {
 
 		// [webpack 流程篇] 准备阶段:  在 entry-option 和 run 事件之间触发 beforeRun 事件
 		// 是 beforeRun 事件，不是 NodeEnvironmentPlugin 事件啊 !!!!!!! 😠😠🔥🔥🔥
+		// 清理缓存
 		compiler.hooks.beforeRun.tap("NodeEnvironmentPlugin", compiler => {
 			if (compiler.inputFileSystem === inputFileSystem) inputFileSystem.purge();
 		});

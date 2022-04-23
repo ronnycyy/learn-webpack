@@ -253,7 +253,10 @@ class Compilation extends Tapable {
 		this.hooks = {
 
 			// 模块构建相关 hook
-			/** @type {SyncHook<Module>} */
+			/** 
+			 * 开始构建某个模块
+			 * @type {SyncHook<Module>}
+			 *  */
 			buildModule: new SyncHook(["module"]),
 			/** @type {SyncHook<Module>} */
 			rebuildModule: new SyncHook(["module"]),
@@ -503,8 +506,13 @@ class Compilation extends Tapable {
 		this.namedChunkGroups = new Map();
 		/** @type {Map<string, Chunk>} */
 		this.namedChunks = new Map();
-		/** @type {Module[]} */
+		
+		/**
+		 * loaders构建完成的模块 
+		 * @type {Module[]}
+		 *  */
 		this.modules = [];
+		
 		/** @private @type {Map<string, Module>} */
 		this._modules = new Map();
 		this.cache = null;
@@ -725,6 +733,7 @@ class Compilation extends Tapable {
 
 	/**
 	 * Builds the module object
+	 * [webpack 流程篇] 模块构建和chunk生成: 2. 构建单个模块
 	 *
 	 * @param {Module} module module to be built
 	 * @param {boolean} optional optional flag
@@ -749,6 +758,9 @@ class Compilation extends Tapable {
 		};
 
 		this.hooks.buildModule.call(module);
+
+		// 模块，去！自己构建自己！🚗🚗...
+		// 比如普通模块  webpack/lib/NormalModule.js: build 方法
 		module.build(
 			this.options,
 			this,
@@ -788,11 +800,18 @@ class Compilation extends Tapable {
 					return originalMap.get(a) - originalMap.get(b);
 				});
 				if (error) {
+					// 失败啦 [哭唧唧]，发布 failedModule 事件
 					this.hooks.failedModule.call(module, error);
 					return callback(error);
 				}
+
+				// 构建自己成功啦🎉， compilation 发布 succeedModule 事件
 				this.hooks.succeedModule.call(module);
 				return callback();
+
+				// make: 从entry开始, 递归分析依赖，build 每个依赖模块
+				// make 阶段结束🔚
+				// 接下来进入 seal 阶段: 进行一系列的优化工作，比如 optimize、optimizeChunks 事件
 			}
 		);
 	}
@@ -1261,12 +1280,14 @@ class Compilation extends Tapable {
 		});
 	}
 
+	// 构建完成，得到处理后的源码✅
 	finish(callback) {
 		const modules = this.modules;
 		this.hooks.finishModules.callAsync(modules, err => {
 			if (err) return callback(err);
 
 			for (let index = 0; index < modules.length; index++) {
+				// 得到经过 loader 处理后的源码
 				const module = modules[index];
 				this.reportDependencyErrorsAndWarnings(module, [module]);
 			}
