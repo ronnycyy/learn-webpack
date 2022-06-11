@@ -1,0 +1,17 @@
+{
+  "name": "write-your-loader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "text.js",
+  "scripts": {
+    "start": "node run-loader.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "spritesmith": "^3.4.0",
+    "webpack": "^5.70.0",
+    "webpack-cli": "^4.9.2"
+  }
+}
